@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+import '../../services/referral_storage.dart';
 import '../../widgets/input_field.dart';
 import '../../widgets/section_card.dart';
 
@@ -126,34 +127,42 @@ class _CreateReferralScreenState
   // ----------------------------------------------------------
 
   Future<void> createReferral() async {
-
-    if (!validateForm()) {
-      return;
-    }
-
-    setState(() {
-      isGenerating = true;
-    });
-
-    // Small delay to make the generation
-    // feel like a real system action.
-    await Future.delayed(
-      const Duration(milliseconds: 700),
-    );
-
-    final trackingCode =
-        generateTrackingCode();
-
-    if (!mounted) return;
-
-    // For Step 2 we simply show the
-    // generated tracking code.
-    _showSuccessDialog(trackingCode);
-
-    setState(() {
-      isGenerating = false;
-    });
+  if (!validateForm()) {
+    return;
   }
+
+  setState(() {
+    isGenerating = true;
+  });
+
+  await Future.delayed(
+    const Duration(milliseconds: 700),
+  );
+
+  final trackingCode = generateTrackingCode();
+
+  final referral = {
+    'referralId': trackingCode,
+    'patientName': patientNameController.text.trim(),
+    'age': ageController.text.trim(),
+    'village': villageController.text.trim(),
+    'phone': phoneController.text.trim(),
+    'hospital': selectedHospital,
+    'reason': reasonController.text.trim(),
+    'status': 'Created',
+    'createdAt': DateTime.now().toIso8601String(),
+  };
+
+  await ReferralStorage.saveReferral(referral);
+
+  if (!mounted) return;
+
+  setState(() {
+    isGenerating = false;
+  });
+
+  _showSuccessDialog(trackingCode);
+}
 
   // ----------------------------------------------------------
   // SUCCESS DIALOG

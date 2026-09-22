@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../widgets/stat_card.dart';
 import '../widgets/action_button.dart';
 import 'referral/create_referral_screen.dart';
+import 'referral/track_referral_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -257,9 +258,11 @@ class HomeScreen extends StatelessWidget {
 
                                   OutlinedButton.icon(
                                     onPressed: () {
-                                      _comingSoon(
+                                      Navigator.push(
                                         context,
-                                        'Track Referral',
+                                        MaterialPageRoute(
+                                          builder: (_) => const TrackReferralScreen(),
+                                        ),
                                       );
                                     },
 
